@@ -1,11 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "LeetSync",
-  "version": "0.2.0",
-  "description": "save and load extension settings.",
+  "name": "LeetSync Phase 3",
+  "version": "0.3.0",
+  "description": "move settings and GitHub testing into a background worker.",
   "action": {
     "default_popup": "popup.html",
     "default_title": "LeetSync"
   },
-  "permissions": ["storage"]
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "permissions": ["storage"],
+  "host_permissions": ["https://api.github.com/*"]
 }

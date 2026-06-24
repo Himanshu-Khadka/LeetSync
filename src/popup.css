@@ -1,5 +1,5 @@
 body {
-  width: 340px;
+  width: 350px;
   margin: 0;
   font-family: Arial, sans-serif;
   color: #24292f;
@@ -54,18 +54,31 @@ input:focus {
   box-shadow: 0 0 0 2px rgba(9, 105, 218, 0.18);
 }
 
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
 button {
   min-height: 36px;
-  border: 1px solid #1f883d;
+  border: 1px solid #d0d7de;
   border-radius: 6px;
-  background: #1f883d;
-  color: #ffffff;
+  background: #f6f8fa;
+  color: #24292f;
   font-weight: 600;
   cursor: pointer;
 }
 
-button:hover {
-  background: #1a7f37;
+button:first-child {
+  border-color: #1f883d;
+  background: #1f883d;
+  color: #ffffff;
+}
+
+button:disabled {
+  cursor: default;
+  opacity: 0.6;
 }
 
 #status {

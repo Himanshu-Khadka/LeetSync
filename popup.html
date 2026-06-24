@@ -10,7 +10,7 @@
     <main>
       <header>
         <h1>LeetSync</h1>
-        <p>Save your GitHub sync settings.</p>
+        <p>Settings are now handled by the background worker.</p>
       </header>
 
       <form id="settings-form">
@@ -39,7 +39,11 @@
           <input id="basePath" type="text" placeholder="leetcode">
         </label>
 
-        <button type="submit">Save Settings</button>
+        <div class="actions">
+          <button type="submit">Save</button>
+          <button id="test-github" type="button">Test GitHub</button>
+        </div>
+
         <p id="status">Ready</p>
       </form>
     </main>

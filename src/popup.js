@@ -1,13 +1,6 @@
-const DEFAULT_SETTINGS = {
-  token: "",
-  owner: "",
-  repo: "",
-  branch: "main",
-  basePath: "leetcode"
-};
-
 const form = document.getElementById("settings-form");
 const statusText = document.getElementById("status");
+const testGitHubButton = document.getElementById("test-github");
 
 const fields = {
   token: document.getElementById("token"),
@@ -19,71 +12,103 @@ const fields = {
 
 document.addEventListener("DOMContentLoaded", loadSettings);
 form.addEventListener("submit", saveSettings);
+testGitHubButton.addEventListener("click", testGitHub);
 
 async function loadSettings() {
-  const savedSettings = await chrome.storage.local.get(Object.keys(DEFAULT_SETTINGS));
-  const settings = {
-    ...DEFAULT_SETTINGS,
-    ...savedSettings
-  };
+  const response = await chrome.runtime.sendMessage({ type: "getSettings" });
 
-  fields.owner.value = settings.owner;
-  fields.repo.value = settings.repo;
-  fields.branch.value = settings.branch;
-  fields.basePath.value = settings.basePath;
+  if (!response?.ok) {
+    setStatus(response?.error || "Could not load settings.", "error");
+    return;
+  }
 
-  // Do not show the saved token again. Just tell the user that one exists.
-  fields.token.placeholder = settings.token ? "Stored token" : "Fine-grained PAT";
-
+  fillForm(response.settings);
   setStatus("Settings loaded.", "success");
 }
 
 async function saveSettings(event) {
   event.preventDefault();
 
-  const currentSettings = await chrome.storage.local.get(Object.keys(DEFAULT_SETTINGS));
-  const settings = {
-    token: fields.token.value.trim() || currentSettings.token || "",
-    owner: fields.owner.value.trim(),
-    repo: fields.repo.value.trim(),
-    branch: fields.branch.value.trim() || "main",
-    basePath: normalizeBasePath(fields.basePath.value)
-  };
+  await withButtonsDisabled(async () => {
+    const response = await chrome.runtime.sendMessage({
+      type: "saveSettings",
+      settings: readForm()
+    });
 
-  const error = validateSettings(settings);
-  if (error) {
-    setStatus(error, "error");
-    return;
+    if (!response?.ok) {
+      setStatus(response?.error || "Save failed.", "error");
+      return;
+    }
+
+    fields.token.value = "";
+    fillForm(response.settings);
+    setStatus("Settings saved.", "success");
+  });
+}
+
+async function testGitHub() {
+  await withButtonsDisabled(async () => {
+    const saved = await saveSettingsBeforeTest();
+    if (!saved) return;
+
+    const response = await chrome.runtime.sendMessage({ type: "testGitHub" });
+
+    if (!response?.ok) {
+      setStatus(response?.error || "GitHub test failed.", "error");
+      return;
+    }
+
+    setStatus(`Connected as ${response.login}.`, "success");
+  });
+}
+
+async function saveSettingsBeforeTest() {
+  const response = await chrome.runtime.sendMessage({
+    type: "saveSettings",
+    settings: readForm()
+  });
+
+  if (!response?.ok) {
+    setStatus(response?.error || "Save failed.", "error");
+    return false;
   }
-
-  await chrome.storage.local.set(settings);
 
   fields.token.value = "";
-  fields.token.placeholder = settings.token ? "Stored token" : "Fine-grained PAT";
-  setStatus("Settings saved.", "success");
+  fillForm(response.settings);
+  return true;
 }
 
-function validateSettings(settings) {
-  if (!settings.owner) return "GitHub owner is required.";
-  if (!settings.repo) return "Repository name is required.";
-
-  if (!/^[A-Za-z0-9-]+$/.test(settings.owner)) {
-    return "GitHub owner looks invalid.";
-  }
-
-  if (!/^[A-Za-z0-9_.-]+$/.test(settings.repo)) {
-    return "Repository name looks invalid.";
-  }
-
-  return "";
+function readForm() {
+  return {
+    token: fields.token.value,
+    owner: fields.owner.value,
+    repo: fields.repo.value,
+    branch: fields.branch.value,
+    basePath: fields.basePath.value
+  };
 }
 
-function normalizeBasePath(path) {
-  return path
-    .trim()
-    .replace(/\\/g, "/")
-    .replace(/^\/+|\/+$/g, "")
-    .replace(/\/{2,}/g, "/") || "leetcode";
+function fillForm(settings) {
+  fields.owner.value = settings.owner || "";
+  fields.repo.value = settings.repo || "";
+  fields.branch.value = settings.branch || "main";
+  fields.basePath.value = settings.basePath || "leetcode";
+  fields.token.placeholder = settings.hasToken ? "Stored token" : "Fine-grained PAT";
+}
+
+async function withButtonsDisabled(work) {
+  const buttons = Array.from(document.querySelectorAll("button"));
+  buttons.forEach((button) => {
+    button.disabled = true;
+  });
+
+  try {
+    await work();
+  } finally {
+    buttons.forEach((button) => {
+      button.disabled = false;
+    });
+  }
 }
 
 function setStatus(message, type) {
