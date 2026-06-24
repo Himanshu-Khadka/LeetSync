@@ -1,25 +1,11 @@
 {
   "manifest_version": 3,
   "name": "LeetSync",
-  "description": "Sync accepted LeetCode submissions to GitHub with a small, auditable extension.",
-  "version": "0.1.0",
+  "version": "0.2.0",
+  "description": "save and load extension settings.",
   "action": {
     "default_popup": "popup.html",
     "default_title": "LeetSync"
   },
-  "background": {
-    "service_worker": "src/background.js"
-  },
-  "permissions": ["storage"],
-  "host_permissions": [
-    "https://leetcode.com/*",
-    "https://api.github.com/*"
-  ],
-  "content_scripts": [
-    {
-      "matches": ["https://leetcode.com/problems/*"],
-      "js": ["src/contentScript.js"],
-      "run_at": "document_idle"
-    }
-  ]
+  "permissions": ["storage"]
 }

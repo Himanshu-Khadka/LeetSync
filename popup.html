@@ -10,13 +10,38 @@
     <main>
       <header>
         <h1>LeetSync</h1>
-        <p>Extension loaded successfully.</p>
+        <p>Save your GitHub sync settings.</p>
       </header>
 
-      <section>
-        <button id="test-button" type="button">Test Button</button>
+      <form id="settings-form">
+        <label>
+          GitHub token
+          <input id="token" type="password" autocomplete="off" placeholder="Fine-grained PAT">
+        </label>
+
+        <label>
+          GitHub owner
+          <input id="owner" type="text" placeholder="your-username">
+        </label>
+
+        <label>
+          Repository
+          <input id="repo" type="text" placeholder="leetcode-solutions">
+        </label>
+
+        <label>
+          Branch
+          <input id="branch" type="text" placeholder="main">
+        </label>
+
+        <label>
+          Base path
+          <input id="basePath" type="text" placeholder="leetcode">
+        </label>
+
+        <button type="submit">Save Settings</button>
         <p id="status">Ready</p>
-      </section>
+      </form>
     </main>
 
     <script src="src/popup.js"></script>
