@@ -1,15 +1,36 @@
 {
   "manifest_version": 3,
-  "name": "LeetSync Phase 3",
-  "version": "0.3.0",
-  "description": "move settings and GitHub testing into a background worker.",
+  "name": "LeetSync",
+  "short_name": "LeetSync",
+  "description": "Save accepted LeetCode submissions to a GitHub repository.",
+  "version": "1.0.0",
   "action": {
     "default_popup": "popup.html",
-    "default_title": "LeetSync"
+    "default_title": "LeetSync",
+    "default_icon": {
+      "16": "assets/icon-16.png",
+      "32": "assets/icon-32.png"
+    }
   },
   "background": {
     "service_worker": "src/background.js"
   },
+  "icons": {
+    "16": "assets/icon-16.png",
+    "32": "assets/icon-32.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
+  },
   "permissions": ["storage"],
-  "host_permissions": ["https://api.github.com/*"]
+  "host_permissions": [
+    "https://leetcode.com/*",
+    "https://api.github.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://leetcode.com/problems/*"],
+      "js": ["src/contentScript.js"],
+      "run_at": "document_idle"
+    }
+  ]
 }

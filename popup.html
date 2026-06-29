@@ -8,46 +8,64 @@
   </head>
   <body>
     <main>
-      <header>
-        <h1>LeetSync</h1>
-        <p>Settings are now handled by the background worker.</p>
+      <header class="app-header">
+        <img src="assets/icon-48.png" width="36" height="36" alt="">
+        <div>
+          <h1>LeetSync</h1>
+          <p id="status" role="status" aria-live="polite">Loading settings...</p>
+        </div>
       </header>
 
       <form id="settings-form">
-        <label>
-          GitHub token
-          <input id="token" type="password" autocomplete="off" placeholder="Fine-grained PAT">
-        </label>
+        <section aria-labelledby="github-heading">
+          <h2 id="github-heading">GitHub connection</h2>
 
-        <label>
-          GitHub owner
-          <input id="owner" type="text" placeholder="your-username">
-        </label>
+          <label for="token">Personal access token</label>
+          <div class="token-row">
+            <input id="token" type="password" autocomplete="off" placeholder="Fine-grained token">
+            <button id="clear-token" class="secondary" type="button">Clear</button>
+          </div>
+          <p class="help">The token stays in this browser profile and needs repository Contents read/write access.</p>
 
-        <label>
-          Repository
-          <input id="repo" type="text" placeholder="leetcode-solutions">
-        </label>
+          <div class="field-grid">
+            <div>
+              <label for="owner">Owner</label>
+              <input id="owner" type="text" autocomplete="username" placeholder="github-user" required>
+            </div>
+            <div>
+              <label for="repo">Repository</label>
+              <input id="repo" type="text" placeholder="leetcode-solutions" required>
+            </div>
+          </div>
 
-        <label>
-          Branch
-          <input id="branch" type="text" placeholder="main">
-        </label>
+          <div class="field-grid">
+            <div>
+              <label for="branch">Branch</label>
+              <input id="branch" type="text" placeholder="main" required>
+            </div>
+            <div>
+              <label for="basePath">Folder</label>
+              <input id="basePath" type="text" placeholder="leetcode">
+            </div>
+          </div>
 
-        <label>
-          Base path
-          <input id="basePath" type="text" placeholder="leetcode">
-        </label>
+          <label class="checkbox" for="includeReadme">
+            <input id="includeReadme" type="checkbox">
+            <span>Create a README for each problem</span>
+          </label>
+        </section>
 
         <div class="actions">
-          <button type="submit">Save</button>
-          <button id="test-github" type="button">Test GitHub</button>
+          <button type="submit">Save settings</button>
+          <button id="test" class="secondary" type="button">Check connection</button>
         </div>
-
-        <p id="status">Ready</p>
       </form>
-    </main>
 
+      <section id="last-sync" class="sync-status" aria-labelledby="sync-heading" hidden>
+        <h2 id="sync-heading">Latest activity</h2>
+        <p></p>
+      </section>
+    </main>
     <script src="src/popup.js"></script>
   </body>
 </html>
