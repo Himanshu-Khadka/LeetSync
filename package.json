@@ -1,0 +1,16 @@
+{
+  "name": "leetsync-extension",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Development and release scripts for the LeetSync browser extension.",
+  "type": "module",
+  "scripts": {
+    "icons": "node scripts/generate-icons.mjs",
+    "check": "node --check src/core.js && node --check src/background.js && node --check src/contentScript.js && node --check src/popup.js",
+    "test": "node --test",
+    "build": "npm run icons && npm run check && npm test && node scripts/build-release.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
